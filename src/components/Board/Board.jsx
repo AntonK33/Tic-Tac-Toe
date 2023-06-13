@@ -1,128 +1,160 @@
-import { useState } from 'react';
+//import { useState } from 'react';
 import css from './Board.module.css';
+import React from 'react';
 
 const Square = ({ onChange, value }) => {
   return (
-    <button className={css.square_style} onClick={onChange}>
+    <button type="button" className={css.square_style} onClick={onChange}>
       {value}
     </button>
   );
 };
-export const Board = () => {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xNext, setXNext] = useState(true);
-  console.log(squares);
 
+export const Board = ({ xNext, squares, onPlay }) => {
+  let nextSquares;
   const hendlerClick = i => {
-    if (squares[i] || nextPlayer) {
+    if (squares[i] || calculateWinner(squares)) {
       return;
     }
-    let nextSquares = squares;
+    nextSquares = squares.slice();
     if (xNext) {
       nextSquares[i] = 'x';
     } else {
       nextSquares[i] = '0';
     }
-
-    setSquares(nextSquares);
-    setXNext(!xNext);
-    //console.log(squares);
-    calculateWinner(squares);
+    onPlay(nextSquares);
+    //calculateWinner(squares);
   };
-  let show;
-  let winner = nextPlayer;
+  let nextPlayer;
+  if (xNext) {
+    nextPlayer = 'x';
+  } else {
+    nextPlayer = 'o';
+  }
 
-  if (winner) {
+  let show;
+  if (calculateWinner(squares)) {
     show = 'Winner: ' + winner;
   } else {
-    show = 'Next player: ';
+    show = 'Next player: ' + nextPlayer;
   }
 
   return (
     <div
       style={{
         display: 'flex',
-        flexDirection: 'column',
+        //flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
+        //alignItems: 'center',
       }}
     >
-      <div>
-        <p>{show}</p>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          //justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div>
+          <p>{show}</p>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          <Square
+            value={squares[0]}
+            onChange={() => {
+              hendlerClick(0);
+            }}
+          />
+
+          <Square
+            value={squares[1]}
+            onChange={() => {
+              hendlerClick(1);
+            }}
+          />
+
+          <Square
+            value={squares[2]}
+            onChange={() => {
+              hendlerClick(2);
+            }}
+          />
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          <Square
+            value={squares[3]}
+            onChange={() => {
+              hendlerClick(3);
+            }}
+          />
+
+          <Square
+            value={squares[4]}
+            onChange={() => {
+              hendlerClick(4);
+            }}
+          />
+
+          <Square
+            value={squares[5]}
+            onChange={() => {
+              hendlerClick(5);
+            }}
+          />
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          <Square
+            value={squares[6]}
+            onChange={() => {
+              hendlerClick(6);
+            }}
+          />
+
+          <Square
+            value={squares[7]}
+            onChange={() => {
+              hendlerClick(7);
+            }}
+          />
+
+          <Square
+            value={squares[8]}
+            onChange={() => {
+              hendlerClick(8);
+            }}
+          />
+        </div>
       </div>
-      <div>
-        <Square
-          value={squares[0]}
-          onChange={() => {
-            hendlerClick(0);
-          }}
-        />
-
-        <Square
-          value={squares[1]}
-          onChange={() => {
-            hendlerClick(1);
-          }}
-        />
-
-        <Square
-          value={squares[2]}
-          onChange={() => {
-            hendlerClick(2);
-          }}
-        />
-      </div>
 
       <div>
-        <Square
-          value={squares[3]}
-          onChange={() => {
-            hendlerClick(3);
-          }}
-        />
-
-        <Square
-          value={squares[4]}
-          onChange={() => {
-            hendlerClick(4);
-          }}
-        />
-
-        <Square
-          value={squares[5]}
-          onChange={() => {
-            hendlerClick(5);
-          }}
-        />
-      </div>
-
-      <div>
-        <Square
-          value={squares[6]}
-          onChange={() => {
-            hendlerClick(6);
-          }}
-        />
-
-        <Square
-          value={squares[7]}
-          onChange={() => {
-            hendlerClick(7);
-          }}
-        />
-
-        <Square
-          value={squares[8]}
-          onChange={() => {
-            hendlerClick(8);
-          }}
-        />
+        {/* {squares.map((square, index) => {
+          return (
+            <ol>
+              <button key={index}>{square}</button>
+            </ol>
+          );
+        })} */}
       </div>
     </div>
   );
 };
 
-let nextPlayer;
+let winner;
 
 const calculateWinner = squares => {
   const line = [
@@ -144,25 +176,11 @@ const calculateWinner = squares => {
     [8, 5, 2],
   ];
 
-  // const lineMap = line.map(lin => lin);
-  // const [a, b, c, d] = lineMap;
-  // console.log(lineMap);
-  // console.log(a, b, c, d);
-  // if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-  //   return squares[a];
-  // } else {
-  //   return;
-  // }
-
   for (let i = 0; i < line.length; i++) {
     const [a, b, c] = line[i];
-    console.log(line[i]);
-    console.log(a, b, c);
+
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return (nextPlayer = squares[a]);
+      return (winner = squares[a]);
     }
-    //else {
-    //     return;
-    //   }
   }
 };
